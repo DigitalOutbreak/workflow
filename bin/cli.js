@@ -35,13 +35,15 @@ const PRESETS = {
       "docs/context/project-overview.md",
       "docs/context/coding-standards.md",
       "docs/context/ai-interaction.md",
+      "docs/context/delivery-workflow.md",
       "docs/context/current-feature.md",
       "docs/context/backlog.md",
       "docs/context/roadmap.md",
       "docs/specs/project-spec.md",
       ".claude/agents/code-scanner.md",
     ],
-    dirs: [".claude/skills/feature", ".claude/skills/cleanup"],
+    dirs: [".claude/skills/feature", ".claude/skills/cleanup", ".claude/skills/roadmap"],
+    agentSkillDirs: ["feature", "cleanup", "roadmap"],
     emptyDirs: ["docs/context/features", "docs/context/designs"],
   },
   site: {
@@ -58,6 +60,7 @@ const PRESETS = {
       "docs/context/ai-interaction.md",
     ],
     dirs: [".claude/skills/cleanup"],
+    agentSkillDirs: ["cleanup"],
     emptyDirs: [],
   },
 };
@@ -85,6 +88,20 @@ function copyDir(src, dest) {
     const destChild = path.join(dest, entry.name);
     if (entry.isDirectory()) {
       copyDir(srcChild, destChild);
+    } else if (entry.isFile()) {
+      fs.copyFileSync(srcChild, destChild);
+    }
+  }
+}
+
+function copySkillDirForAgents(src, dest) {
+  fs.mkdirSync(dest, { recursive: true });
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    const srcChild = path.join(src, entry.name);
+    const destName = entry.name === "skill.md" ? "SKILL.md" : entry.name;
+    const destChild = path.join(dest, destName);
+    if (entry.isDirectory()) {
+      copySkillDirForAgents(srcChild, destChild);
     } else if (entry.isFile()) {
       fs.copyFileSync(srcChild, destChild);
     }
@@ -135,6 +152,10 @@ function cmdInit(targetArg, presetName = "product") {
   for (const d of preset.dirs) {
     if (exists(path.join(target, d))) conflicts.push(d + "/");
   }
+  for (const skillName of preset.agentSkillDirs || []) {
+    const d = path.join(".agents", "skills", skillName);
+    if (exists(path.join(target, d))) conflicts.push(d + "/");
+  }
   if (conflicts.length > 0) {
     console.error(
       red("error: target already has these — refusing to overwrite:")
@@ -164,6 +185,17 @@ function cmdInit(targetArg, presetName = "product") {
     copyDir(src, dest);
     console.log(`  ${green("+")} ${d}/`);
   }
+  for (const skillName of preset.agentSkillDirs || []) {
+    const src = path.join(preset.srcRoot, ".claude", "skills", skillName);
+    const destPath = path.join(".agents", "skills", skillName);
+    const dest = path.join(target, destPath);
+    if (!exists(src)) {
+      console.error(red(`error: missing source .claude/skills/${skillName}/ in package`));
+      process.exit(3);
+    }
+    copySkillDirForAgents(src, dest);
+    console.log(`  ${green("+")} ${destPath}/`);
+  }
   for (const d of preset.emptyDirs) {
     fs.mkdirSync(path.join(target, d), { recursive: true });
     console.log(`  ${green("+")} ${d}/ ${dim("(empty)")}`);
@@ -172,14 +204,14 @@ function cmdInit(targetArg, presetName = "product") {
   console.log("");
   console.log(bold("Done. Next:"));
   if (presetName === "site") {
-    console.log("  Recommended — open your agent in this directory and run /site-init.");
+    console.log("  Recommended — open your agent in this directory and run /site-init (Codex: $site-init).");
     console.log("  It runs a short interview (~5 min) and fills the templates with your real context.");
     console.log("");
     console.log(`  ${dim("Or, to fill templates by hand:")}`);
     console.log(`  ${dim("  • Edit CLAUDE.md / docs/context/site-brief.md / docs/context/brand.md / etc.")}`);
     console.log(`  ${dim("  • Replace {{Site Name}} and the placeholder content with yours.")}`);
   } else {
-    console.log("  Recommended — open your agent in this directory and run /workflow-init.");
+    console.log("  Recommended — open your agent in this directory and run /workflow-init (Codex: $workflow-init).");
     console.log("  It runs a guided interview and fills the templates with your real context.");
     console.log("");
     console.log(`  ${dim("Or, to fill templates by hand:")}`);
@@ -192,7 +224,7 @@ function cmdInit(targetArg, presetName = "product") {
 
 // Parse the YAML frontmatter from a markdown file with `--- ... ---` at the top.
 // Returns { frontmatter: { ...fields }, body: string }. Permissive — only handles
-// the fields we use (name, description, argument-hint), single-line string values.
+// the fields we use (name and description), single-line string values.
 function parseFrontmatter(content) {
   const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   if (!match) return { frontmatter: {}, body: content };
@@ -552,9 +584,10 @@ ${bold("Two ways to install:")}
 ${bold("Then from any project dir, in your agent:")}
   ${green("/workflow-init")}  for product apps with a database, auth, feature lifecycle
   ${green("/site-init")}      for marketing/agency/brand/landing sites
+  ${dim("Codex uses $workflow-init and $site-init instead of slash commands.")}
 
 ${bold("/workflow-init project types:")}
-  • Web app or site — Next.js / Astro / SvelteKit / TanStack Start scaffolders
+  • Web app or site — AI Elements for AI-native apps, or Next.js / Astro / SvelteKit / TanStack Start scaffolders
   • Backend / API / service — docs install only, you bring the scaffolder
   • Mobile / desktop — docs install only, you bring the scaffolder
   • Other (CLI, library, ML/data) — docs install only

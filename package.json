@@ -1,7 +1,7 @@
 {
   "name": "@digitaloutbreak/workflow",
-  "version": "0.16.0",
-  "description": "Drop-in workflow scaffold for AI-assisted coding — works with Claude Code, Codex, Gemini, Antigravity, and any agent loading the open agent skills standard. Project-agnostic: web apps, backends, mobile, CLIs, libraries. Includes /workflow-init slash command, /feature lifecycle, /cleanup, code-scanner agent, and tool-specific root files (CLAUDE.md / AGENTS.md / GEMINI.md).",
+  "version": "0.18.0",
+  "description": "Drop-in workflow scaffold for AI-assisted coding with guided project discovery, PR-first feature delivery, and framework-aware CI/CD. Works with Claude Code, Codex, Gemini, Antigravity, and Open Skills agents.",
   "bin": {
     "workflow": "bin/cli.js"
   },
@@ -13,10 +13,13 @@
     "GEMINI.md",
     "LICENSE",
     "docs/",
-    ".claude/"
+    ".claude/",
+    "templates/"
   ],
   "scripts": {
-    "test": "node bin/cli.js --help"
+    "test": "node --test tests/*.test.js",
+    "test:smoke": "node bin/cli.js --help",
+    "test:pack": "npm pack --dry-run --json"
   },
   "engines": {
     "node": ">=18"
@@ -25,6 +28,8 @@
     "claude-code",
     "claude",
     "workflow",
+    "ci-cd",
+    "github-actions",
     "starter",
     "scaffold",
     "agents",

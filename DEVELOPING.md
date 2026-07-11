@@ -14,9 +14,10 @@
 
 **`@digitaloutbreak/workflow`** is an opinionated, cross-agent scaffold for AI coding workflows.
 It installs into any project to give Claude Code, Codex, Cursor, Gemini CLI (and ~12 more) a
-shared `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` brief, five tiered context docs in
-`docs/context/`, two skills (`/workflow-init`, `/site-init`), a `/feature` lifecycle skill, a
-`/cleanup` skill, and a `code-scanner` agent.
+shared `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` brief, six required context docs in
+`docs/context/`, two skills (`/workflow-init`, `/site-init`), a PR-first `/feature` lifecycle,
+`/roadmap`, `/cleanup`, and a `code-scanner` agent. Product bootstrap also configures a
+framework-aware CI/CD baseline when the user opts in.
 
 **Install paths** (which the package supports today):
 
@@ -43,17 +44,18 @@ claude-workflow/
 │           ├── skill.md          # `/feature` lifecycle entry
 │           └── actions/          # six actions: spec, load, start, review, explain, complete
 ├── docs/                         # SHIPS to npm — TEMPLATES (placeholders for /workflow-init)
-│   ├── context/                  # the five auto-imported docs (templates)
+│   ├── context/                  # the six required auto-imported docs (templates)
 │   │   ├── thesis.md             # {{Project Name}} strategic memo
 │   │   ├── project-overview.md   # {{Project Name}} architecture summary
 │   │   ├── coding-standards.md   # Next.js + Tailwind v4 starter defaults
 │   │   ├── ai-interaction.md     # literal — copy-as-is rules
+│   │   ├── delivery-workflow.md  # CI/CD, branch protection, deploy/smoke template
 │   │   ├── current-feature.md    # literal — empty working state
 │   │   ├── backlog.md            # literal — empty deferred items
 │   │   ├── roadmap.md            # template Now/Next/Later
 │   │   └── designs/.gitkeep      # placeholder for /design outputs
 │   └── specs/project-spec.md     # template authoritative spec
-├── templates/                    # NOT shipped — site-init source templates
+├── templates/                    # SHIPS to npm — site-init source templates
 │   └── site/                     # Astro/Next/SvelteKit site templates
 ├── site/                         # NOT shipped — marketing site (Astro)
 │   └── src/pages/blog/           # /blog with three posts
@@ -72,7 +74,7 @@ claude-workflow/
 `package.json` `files` field controls what `npm publish` bundles:
 
 ```json
-"files": ["bin/", "skills/", "CLAUDE.md", "AGENTS.md", "GEMINI.md", "LICENSE", "docs/", ".claude/"]
+"files": ["bin/", "skills/", "CLAUDE.md", "AGENTS.md", "GEMINI.md", "LICENSE", "docs/", ".claude/", "templates/"]
 ```
 
 Plus `.npmignore` excludes specific files from those directories:
@@ -85,7 +87,8 @@ site/blog-preview*.html   # local preview renders
 DEVELOPING.md             # this file
 ```
 
-Run `npm pack --dry-run` before any publish to verify the tarball is clean.
+Run `npm test`, `npm run test:smoke`, and `npm run test:pack` before any publish.
+The artifact test specifically protects the product and site preset payloads from source/package drift.
 
 ## Common dev tasks
 
@@ -102,13 +105,14 @@ npx skills add DigitalOutbreak/workflow -g
 # then in Claude Code: /workflow-init
 ```
 
-**Ship a patch:**
+**Ship a release:**
 ```sh
-# 1. Bump version in package.json
-# 2. Commit version bump
-# 3. git push origin main
-# 4. npm publish
-# Then verify: npm view @digitaloutbreak/workflow version
+# 1. Work on a feature/fix/chore branch and bump package.json
+# 2. Run npm test, npm run test:smoke, npm audit --omit=dev, npm run test:pack
+# 3. Open a pull request and wait for the required Quality check
+# 4. Merge through GitHub
+# 5. Pull main with --ff-only, then npm publish
+# 6. Verify: npm view @digitaloutbreak/workflow version
 ```
 
 **Run the marketing site locally:**
@@ -126,16 +130,26 @@ cd site && npm run dev
 
 4. **Cross-agent agent (subagent) parity is incomplete.** `/feature` and `/cleanup` skills work in ~15 agents. The `code-scanner` agent is Claude Code only — Codex has its own TOML-based subagent format but the scaffold doesn't dual-install it yet.
 
-5. **Site is separate from scaffold.** Never bundle site changes with scaffold version bumps. `site/` isn't in `package.json` files; Vercel auto-deploys from `main` push.
+5. **The marketing site is separate from the site starter template.** `site/` is not published. `templates/site/` must be published because `init-site` reads it at runtime. Do not bundle changes under `site/` with scaffold releases.
+
+6. **Published artifacts must match GitHub.** Never publish from uncommitted or unpushed source. A release is complete only when the tagged/merged source, npm version, and tested tarball describe the same files.
 
 ## Current state of open work
 
-**Shipped (live as of 0.15.9):**
+**Shipped (live as of 0.17.0):**
 - ✓ Junk cleanup — removed `settings.local.json`, `README.html`, `test.md` from tarball
 - ✓ `.npmignore` defense layer
 - ✓ Gemini TOML fix (commit d7606fb)
 - ✓ Site-init improvements (CWD decision, free-text prose, sibling filter)
 - ✓ /blog with three posts (rebuttal, constructor, /feature explainer)
+- ✓ `/roadmap` skill and Open Skills copies for product projects
+
+**In 0.18.0:**
+- PR-first `/feature complete` flow with full-diff review and post-merge verification
+- Framework-aware CI/CD and branch-protection setup in `/workflow-init`
+- Delivery workflow template, Dependabot, pull-request template, and optional GitHub Project setup
+- Package-level CI and product/site artifact tests
+- `templates/site/` included in the npm payload
 
 **Open / parked (research mode):**
 - README's "harmless but inert" claim about TOML files — wrong, should warn

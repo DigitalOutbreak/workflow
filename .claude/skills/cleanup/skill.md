@@ -1,14 +1,13 @@
 ---
 name: cleanup
 description: Clean up project housekeeping tasks (add "run" to execute fixes)
-argument-hint: run|check
 metadata:
   internal: true
 ---
 
 Review the codebase for cleanup tasks:
 
-1. Make sure that the history in @context/current-feature.md is in order from oldest to newest
+1. Make sure that the history in `docs/context/current-feature.md` is in order from oldest to newest
 2. Find unnecessary console.log statements in src/
 3. Find unused imports
 4. Check for stale TODO comments
@@ -16,6 +15,7 @@ Review the codebase for cleanup tasks:
 6. Check that context files match actual project state
 7. Check if the .env.production has the same variables (not always the same value) as the .env. If something is missing, tell me.
 8. Find `@ts-ignore` comments that might be stale
+9. Check `docs/context/backlog.md` for stale entries that appear to have shipped already, duplicate roadmap items, or items too trivial to keep tracking
 
 **Mode: $ARGUMENTS**
 

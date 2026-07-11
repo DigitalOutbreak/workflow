@@ -1,6 +1,6 @@
 # Spec Action
 
-Authors a new feature or fix spec at `docs/context/features/<slug>-spec.md` (or `docs/context/fixes/<slug>-spec.md`) via a short discovery interview, in the exact shape the existing specs in `docs/context/features/` use. Does NOT touch `current-feature.md` — that's `load`'s job. After saving, point the user at `/feature load <slug>-spec`.
+Authors a new feature or fix spec at `docs/context/features/<slug>-spec.md` (or `docs/context/fixes/<slug>-spec.md`) via a short discovery interview, in the exact shape the existing specs in `docs/context/features/` use. Does NOT touch `current-feature.md` — that's `load`'s job. After saving, point the user at `/feature load <slug>-spec` in Claude Code or `$feature load <slug>-spec` in Codex.
 
 ## Steps
 
@@ -114,11 +114,12 @@ Authors a new feature or fix spec at `docs/context/features/<slug>-spec.md` (or 
      Designs: docs/context/designs/<slug>/ (drop files here when ready)
      </if>
      Next:  /feature load <slug>-spec
+     Codex: $feature load <slug>-spec
      ```
    - **Revise** → ask which section to change, regenerate just that section, then re-show + re-prompt.
    - **Discard** → say so and stop. Do not write the file. If a designs directory was created and is still empty, remove it on discard so we don't leave orphan dirs.
 
-7. **Do NOT touch `current-feature.md`.** No status change, no goals update, no branch creation. The spec file stands alone until the user runs `/feature load <slug>-spec`.
+7. **Do NOT touch `current-feature.md`.** No status change, no goals update, no branch creation. The spec file stands alone until the user runs `/feature load <slug>-spec` in Claude Code or `$feature load <slug>-spec` in Codex.
 
 ## Guardrails
 
