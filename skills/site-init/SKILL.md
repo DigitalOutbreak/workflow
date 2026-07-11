@@ -1,7 +1,6 @@
 ---
 name: site-init
 description: Bootstrap a marketing site project — installs slim context docs (site brief, brand, pages, content backlog, coding standards, AI interaction), optionally scaffolds Astro / Next.js / SvelteKit, runs a short interview (~5 min), and for existing sites reads the repo to pre-fill the page inventory. Use for agency sites, brand sites, landing pages, content sites. Optional argument is the target directory. Supports Claude Code, Codex, and any AI agent that loads agent skills.
-argument-hint: [target-dir]
 ---
 
 # Site Init
@@ -247,11 +246,11 @@ Don't try to infer target keywords or CTAs from the code — those are intent, n
 
 Write all interview answers into the installed templates:
 
-- **`CLAUDE.md` / `AGENTS.md` / `GEMINI.md`** — replace `{{Site Name}}` and the one-line description.
+- **`CLAUDE.md` / `AGENTS.md` / `GEMINI.md`** — replace `{{Site Name}}` and the one-line description. Keep root briefs thin: imports and tool entrypoints only.
 - **`site-brief.md`** — fill *What this site is*, *Who it's for*, *What it sells*, *What success looks like*, *Stack*, *Key links*. Leave *Out of scope* with a starter row for the user to extend.
 - **`brand.md`** — fill *Voice* adjectives, *Words we avoid*, *Visual direction palette/typography rows*. Leave the *Headline patterns* and per-surface *Tone* table with placeholder rows the user fills in over time.
 - **`pages.md`** — for new sites, leave the template; for existing sites, populated by Stage 6.
-- **`coding-standards.md`** — adjust framework section (Astro vs Next vs SvelteKit) and CMS section.
+- **`coding-standards.md`** — adjust framework section (Astro vs Next vs SvelteKit), CMS section, project commands, and project layout.
 - **`ai-interaction.md`** — leave as-is unless interview revealed custom workflow rules.
 - **`content-backlog.md`** — leave empty for new sites; for existing sites, ask "anything you wanted to add or rewrite that I should put in the backlog?" and capture 0-3 items.
 

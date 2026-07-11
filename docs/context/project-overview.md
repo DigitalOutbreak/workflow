@@ -106,6 +106,22 @@ flowchart LR
 
 ---
 
+## 🚀 Repository and delivery
+
+| Area | Status |
+|---|---|
+| GitHub | [not connected / planned / owner/repository] |
+| GitHub Project | [linked URL / planned / skipped] |
+| Visibility | [private / public / n/a] |
+| Hosting | [Vercel / Cloudflare / Netlify / other / none] |
+| CI | [configured / planned / skipped] |
+| Protected default branch | [configured / pending first successful CI run / planned / skipped] |
+| Production smoke | [configured / planned / not applicable] |
+
+See [`delivery-workflow.md`](./delivery-workflow.md) for exact commands, required checks, deployment flow, and rollback expectations.
+
+---
+
 ## 🤖 Agent capabilities
 
 MCPs **recommended** for this project so AI agents can do meaningful work without copy-paste. **Run the install commands below at the end of `/workflow-init` (Stage 9 hand-off)** — they require an agent restart, so installing earlier would wipe the discovery interview context.
@@ -212,6 +228,7 @@ flowchart LR
 | `project-overview.md` | This doc | every session |
 | `coding-standards.md` | Coding style and rules | every session |
 | `ai-interaction.md` | How AI interacts in this project | every session |
+| [`delivery-workflow.md`](./delivery-workflow.md) | Pull requests, CI/CD, deployment, and smoke checks | every session |
 | `current-feature.md` | The feature being worked on right now | every session |
 | [`backlog.md`](./backlog.md) | Deferred items from shipped features | on demand |
 

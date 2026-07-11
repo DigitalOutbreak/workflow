@@ -2,6 +2,18 @@
 
 > **Starter note:** the conventions below describe the stack the OS project ships on — Next.js 16 App Router + TypeScript + Tailwind v4 — with sections for Drizzle ORM if you've picked it. The `/workflow-init` flow will rewrite these sections based on your actual stack picks; if you ran the CLI bare (no interview), edit the sections that don't match. The "no `any` types", "functional components only", "naming", and "code quality" sections are stack-agnostic and stay regardless.
 
+## Project Commands
+
+> Replace with your project's actual commands.
+> Keep this list and `docs/context/delivery-workflow.md` in sync; CI must run commands that really exist.
+
+- `npm run dev` — start dev server
+- `npm run build` — production build
+- `npm run start` — run the production build
+- `npm run typecheck` — `tsc --noEmit`
+- `npm run lint` — ESLint
+- `npm run format` — Prettier on `**/*.{ts,tsx}`
+
 ## TypeScript
 
 - Strict mode enabled
@@ -57,6 +69,20 @@ Example v4 configuration:
 - Server Actions: `src/actions/[feature].ts`
 - Types: `src/types/[feature].ts`
 - Lib/Utils: `src/lib/[utility].ts`
+
+Common default shape:
+
+```text
+{{project-root}}/
+  app/                Next.js App Router (routes, layouts, server actions)
+  components/         shadcn/ui + project components
+  hooks/              React hooks
+  lib/                shared utilities, db, auth clients
+  public/             static assets
+  docs/
+    context/          standing AI/project context
+    specs/            authoritative specs
+```
 
 ## Naming
 

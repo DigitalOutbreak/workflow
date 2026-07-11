@@ -1,7 +1,7 @@
 # Explain Action
 
 1. Read current-feature.md to understand what was implemented
-2. Run `git diff main --name-only` to get list of files changed
+2. Determine the upstream default branch, then run `git diff <merge-base>..HEAD --name-only` to get the full branch change list.
 3. For each file created or modified:
    - Show the file path
    - Give a 1-2 sentence explanation of what it does / what changed

@@ -32,6 +32,7 @@ FILES=(
   "docs/context/project-overview.md"
   "docs/context/coding-standards.md"
   "docs/context/ai-interaction.md"
+  "docs/context/delivery-workflow.md"
   "docs/context/current-feature.md"
   "docs/context/backlog.md"
   "docs/context/roadmap.md"
@@ -42,6 +43,13 @@ FILES=(
 DIRS=(
   ".claude/skills/feature"
   ".claude/skills/cleanup"
+  ".claude/skills/roadmap"
+)
+
+AGENT_DIRS=(
+  ".agents/skills/feature"
+  ".agents/skills/cleanup"
+  ".agents/skills/roadmap"
 )
 
 # Conflict check
@@ -51,6 +59,20 @@ for f in "${FILES[@]}"; do
 done
 for d in "${DIRS[@]}"; do
   [[ -e "$TARGET/$d" ]] && conflicts+=("$d/")
+done
+for d in "${AGENT_DIRS[@]}"; do
+  [[ -e "$TARGET/$d" ]] && conflicts+=("$d/")
+done
+
+# Open Skills copies for Codex, Gemini CLI, and other compatible agents.
+for skill in feature cleanup roadmap; do
+  dest="$TARGET/.agents/skills/$skill"
+  mkdir -p "$dest"
+  cp -R "$STARTER_DIR/.claude/skills/$skill/." "$dest/"
+  if [[ -f "$dest/skill.md" ]]; then
+    mv "$dest/skill.md" "$dest/SKILL.md"
+  fi
+  echo "  + .agents/skills/$skill/"
 done
 
 if (( ${#conflicts[@]} > 0 )); then
